@@ -1,0 +1,78 @@
+{% extends 'Base-Homepage.html' %}
+
+{% block body %}
+
+<div class="view" style="height: 60vh;">
+    <img src="{{MEDIA_URL}}mountains.jpg" class="img-fluid" alt="">
+    <div class="mask flex-center rgba-black-strong text-white">
+      <div class="row">
+        <div class="col-md-12 text-center">
+        <h1 class="display-3 mt-5 pt-5">Welcome to </h1>
+        <a href="{% url 'search-results' %}" class="btn btn-outline-secondary btn-lg text-white">
+          BROWSE <i class="fa fa-arrow-right"></i>
+        </a>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div style="display:inline-block; text-align:center;">
+  <nav style="display:inline-block;text-align:center;"class="navbar navbar-dark mdb-color my-5">
+        <span class="navbar-brand">Your Active Listings: {{ listings|length }}</span>
+  </nav>
+</div>
+
+  <section class="text-center mb-4">
+
+
+    <div class= "row">
+      {% for listing in listings %}
+      <div class="col-lg-3">
+
+
+        <div class="card">
+
+          <div class="view overlay">
+            {% if listing.Textbook.Image %}
+            <img style="height: 400px;" src="{{ listing.Textbook.Image.url }}" class="card-img-top"
+              alt="">
+            {% endif %}
+            <a>
+            </a>
+          </div>
+
+          <div class="card-body text-center">
+
+              <h5 class="grey-text">By {{ listing.Author }}</h5>
+
+                <h5 class="dark-grey-text"><a href="/textbook/{{ listing.Textbook.Textbook_ID }}">{{ listing.Title }}</a>
+                </h5>
+            <h4 class="dark-grey-text">Condition: {{ listing.Cond }}</h4>
+            <h4 class="font-weight-bold blue-text">
+              <strong>{{ listing.Price }}$</strong>
+            </h4>
+            <a href="/textbook/{{ listing.Textbook.Textbook_ID }}/">
+              <h5 class="btn aqua-gradient text-white">Edit Listing</h5>
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+  </section>
+
+
+<script type="text/javascript">
+  /**
+  Display amount of items in cart in a badge
+  */
+  $(document).ready(function(){
+    $('#cart-badge').html({{ cart_length }})
+  });
+</script>
+{% endblock %}

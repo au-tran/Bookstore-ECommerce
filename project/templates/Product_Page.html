@@ -1,0 +1,106 @@
+{% extends 'Base-Homepage.html' %}
+
+{% block body %}
+<div class="container dark-grey-text mt-5" style="width: 100vw; height:100vh;">
+
+
+  <div class="row">
+
+
+    <div class="col-md-6 mb-4">
+      {% if listing.Textbook.Image %}
+      <img style="max-height: 600px; max-width: 300px;" src="{{ listing.Textbook.Image.url }}" alt="Not found">
+      {% endif %}
+    </div>
+    <div class="col-md-6 mb-4">
+      <p class="font-weight-bold lead">{{ listing.Title }}</p>
+      <p class="font-weight-bold lead text-primary">ISBN: {{ listing.ISBN }}</p>
+      <p class="blue-text">By {{ listing.Author }}</p>
+      <p class="font-weight-bold lead">Publisher: {{ listing.Publisher }}</p>
+      <p class="font-weight-bold lead">Date Published: {{ listing.Date_Published }}</p>
+      <p>Condition: {{ listing.Cond }}</p>
+      <p class="lead"> Listed for sale by user
+        <a href="/profile/{{ listing.username }}">{{ listing.username }}</a>
+      </p>
+
+      <p class=" green-text">Price: {{ listing.Price}}$
+          <br>
+          {% if Cart %}
+          <button class="btn btn-primary btn-md my-5" style="left: 50px;" type="submit">Already in Shopping Cart
+              <i class="fa fa-shopping-cart ml-1"></i>
+          </button>
+          {% else %}
+          <button id="add-item-to-cart" class="btn btn-primary btn-md" style="left: 50px;" type="submit">Add to cart
+              <i class="fa fa-shopping-cart ml-1"></i>
+          </button>
+          {% endif %}
+          {% if Wishlist %}
+          <button id="wishlist-button" style="left: 50px;" type="submit">
+            <i class="fa fa-bookmark"></i>
+          </button>
+          {% else %}
+          <button id="wishlist-button" style="left: 50px;" type="submit">
+            <i class="fa fa-bookmark-o"></i>
+          </button>
+          {% endif %}
+      <p class="font-weight-bold lead">Description:</p>
+      <p style="font-size: 12px;">{{ listing.Description }}</p>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    /**
+    Sends an AJAX request to add item to shopping cart
+    */
+
+    $('#add-item-to-cart').one('click',function(){
+
+      $.ajax({
+        type: 'POST',
+        url: '/add-to-cart-request/',
+        data: {'textbook_id': {{ listing.Textbook.Textbook_ID }} },
+        success: function(data)
+        {
+          $('#add-item-to-cart').html("ADDED TO SHOPPING CART")
+        },
+        error: function(response){ alert(response.status);},
+      });
+
+    })
+  })
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#wishlist-button').click(function(){
+      if($(this).children().hasClass('fa-bookmark-o')){
+
+        $.ajax({
+          type: 'POST',
+          url: '/add-to-wishlist-request/',
+          data: {'textbook_id': {{ listing.Textbook.Textbook_ID}} },
+          success: function(data){
+            $('#wishlist-button').html("<i class='fa fa-bookmark'></i>")
+          },
+          error: function(response){ alert(response.status) },
+        });
+      }else if($(this).children().hasClass('fa-bookmark')){
+
+        $.ajax({
+          type: 'POST',
+          url: '/remove-from-wishlist-request/',
+          data: {'textbook_id': {{ listing.Textbook.Textbook_ID }}, 'refresh': 'False'},
+          success: function(data){
+            $('#wishlist-button').html("<i class='fa fa-bookmark-o'></i>")
+          },
+          error: function(response){ alert(response.status) },
+        });
+      }
+    });
+
+
+  });
+</script>
+{% endblock %}
